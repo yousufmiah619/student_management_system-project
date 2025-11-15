@@ -23,3 +23,19 @@ def course_list(request):
             return Response(seralizer.data ,status=201)
     return Response(seralizer.errors ,status=400)
     
+@api_view(["GET","POST"])
+@permission_classes([IsAuthenticated])
+def subject_list(request):
+    if request.method == "GET" :
+        subject=Subjct.objects.all()
+        seralizer=SubjectSeralizer(subject, many=True)
+        return Response(seralizer.data, status=200)
+
+    if request.method == "POST":
+        seralizer=SubjectSeralizer(data=request.data)
+        if seralizer.is_valid():
+            seralizer.save()
+            
+            return Response(seralizer.data ,status=201)
+    return Response(seralizer.errors ,status=400)
+    

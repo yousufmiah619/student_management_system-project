@@ -38,40 +38,61 @@ def send_otp_email(email, otp):
 # ✅ Register user
 @api_view(['POST'])
 @permission_classes([AllowAny])
-@permission_classes([JSONRenderer])
+# @permission_classes([JSONRenderer])
 def register_user(request):
     serializer = CustomUserCreateSerializer(data=request.data)
     if serializer.is_valid():
         user = serializer.save()
 
         # Generate tokens (same as login)
-        from rest_framework_simplejwt.tokens import RefreshToken
         refresh = RefreshToken.for_user(user)
 
         # Choose profile based on role
-        if user.role in ['teacher', 'admin','student']:
-            try:
-                profile = user.user_profile
-            except UserProfile.DoesNotExist:
-                profile = UserProfile.objects.create(
-                    user=user,
-                    name=user.email.split('@')[0]
-                )
-            profile_serializer = UserProfileSerializer(profile)
-        else:
-            return Response(
-                {"error": "Invalid user role"},
-                status=status.HTTP_400_BAD_REQUEST
+    if user.role in ['teacher', 'admin', 'student']:
+        try:
+            profile = user.user_profile
+        except UserProfile.DoesNotExist:
+            profile = UserProfile.objects.create(
+                user=user,
+                first_name=user.email.split('@')[0]  # FIXED
             )
+            
+        profile_serializer = UserProfileSerializer(profile)
+    else:
+        return Response(
+            {"error": "Invalid user role"},
+            status=status.HTTP_400_BAD_REQUEST
+        )
 
-        return Response({
-            "access_token": str(refresh.access_token),
-            "refresh_token": str(refresh),
-            "role": user.role,
-            "profile": profile_serializer.data
-        }, status=status.HTTP_201_CREATED)
+    return Response({
+        "access_token": str(refresh.access_token),
+        "refresh_token": str(refresh),
+        "role": user.role,
+        "profile": profile_serializer.data
+    }, status=status.HTTP_201_CREATED)
+    #     if user.role in ['teacher', 'admin','student']:
+    #         try:
+    #             profile = user.user_profile
+    #         except UserProfile.DoesNotExist:
+    #             profile = UserProfile.objects.create(
+    #                 user=user,
+    #                 name=user.email.split('@')[0]
+    #             )
+    #         profile_serializer = UserProfileSerializer(profile)
+    #     else:
+    #         return Response(
+    #             {"error": "Invalid user role"},
+    #             status=status.HTTP_400_BAD_REQUEST
+    #         )
 
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)    
+    #     return Response({
+    #         "access_token": str(refresh.access_token),
+    #         "refresh_token": str(refresh),
+    #         "role": user.role,
+    #         "profile": profile_serializer.data
+    #     }, status=status.HTTP_201_CREATED)
+
+    # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)    
 
 @api_view(["POST"])
 def login(request):
@@ -79,11 +100,18 @@ def login(request):
     if serializer.is_valid():
         user = serializer.validated_data
         refresh = RefreshToken.for_user(user)
-            
+        
+        try:
+            profile = user.user_profile
+            profile_data = UserProfileSerializer(profile).data
+        except UserProfile.DoesNotExist:
+            profile_data = None 
+                
         return Response({
             "access_token": str(refresh.access_token),
             "refresh_token": str(refresh),
             "role": user.role,
+            "profile":profile_data
         }, status=status.HTTP_200_OK)
     print("serializer.errors",serializer.errors)
     return Response(serializer.errors, status=status.HTTP_401_UNAUTHORIZED)
@@ -128,10 +156,6 @@ def verify_otp(request):
         return Response({"error": "Incorrect OTP"}, status=status.HTTP_400_BAD_REQUEST)
     except OTP.DoesNotExist:
         return Response({"error": "No OTP found for this email"}, status=status.HTTP_404_NOT_FOUND)
-
-
-
-
 
 
 

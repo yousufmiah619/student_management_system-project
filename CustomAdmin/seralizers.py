@@ -4,9 +4,14 @@ from .models import Course, Subjct
 class CourseSeralizer(serializers.ModelSerializer):
     class Meta:
         model=Course
-        Fields="__all__"
+        fields="__all__"
         
 class SubjectSeralizer(serializers.ModelSerializer):
+    course=CourseSeralizer(read_only=True)
+    course_id=serializers.PrimaryKeyRelatedField(source='course',
+        queryset=Course.objects.all(),
+        write_only=True
+    )
     class Meta:
         model=Subjct
-        Fields="__all__"
+        fields=["id","course","course_id","subject_name"]

@@ -3,7 +3,7 @@ from django.conf import settings
 # Create your models here.
 class Course (models.Model):
     course_name=models.CharField(max_length=100)
-    
+    # teacher=models.ForeignKey(Teacher,on_delete=models.SET_NULL,blank=True,null=True,)
     def __str__(self):
         return self.course_name
     
@@ -12,4 +12,4 @@ class Subjct(models.Model):
     subject_name=models.CharField(max_length=100)
     
     def __str__(self):
-        return self.subject_name
+        return self.subject_name    
