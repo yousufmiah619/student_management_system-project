@@ -48,7 +48,7 @@ def register_user(request):
         refresh = RefreshToken.for_user(user)
 
         # Choose profile based on role
-    if user.role in ['teacher', 'admin', 'student']:
+    if user.role in ['admin', 'student','teacher']:
         try:
             profile = user.user_profile
         except UserProfile.DoesNotExist:

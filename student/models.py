@@ -7,4 +7,4 @@ class Student(models.Model):
     course=models.ForeignKey(Course,on_delete=models.RESTRICT,blank=True,null=True)
     
     def __str__(self):
-        return self.user.email if self.user else "NO User"
+        return self.user.first_name if self.user else "NO User"
