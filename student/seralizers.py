@@ -37,14 +37,9 @@ class StudentSeralizer(serializers.ModelSerializer):
         
         user = User.objects.create_user(
             email=email,
-            password=roll_no ,# Use roll_no as password (convert to string)
-            role='student' # Set default role
+            password=roll_no ,
+            role='student'
         )
-        # user = User.objects.create_user(
-        #     email=validated_data['email'],
-        #     password=validated_data['roll_no'],
-        #     role=validated_data.get('role' , 'student')
-        # )
         profile = UserProfile.objects.create(
             user=user,
             first_name=first_name,
@@ -52,7 +47,20 @@ class StudentSeralizer(serializers.ModelSerializer):
             phone_number = phone_number,
             profile_picture = profile_picture,
         )
-        # Subscription.objects.create(user=user)
         student=Student.objects.create(user=profile , roll_no=roll_no , course=course)
         return student
     
+    def update(self, instance, validated_data):
+        user_data = validated_data.pop("user", None)
+
+        if user_data:
+            user = instance.user
+            for field, value in user_data.items():
+                setattr(user, field, value)
+            user.save()
+
+        for field, value in validated_data.items():
+            setattr(instance, field, value)
+
+        instance.save()
+        return instance

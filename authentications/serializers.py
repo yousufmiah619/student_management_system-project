@@ -70,7 +70,7 @@ class OTPSerializer(serializers.ModelSerializer):
 
 class UserProfileSerializer(serializers.ModelSerializer):
    
-
+    user=CustomUserSerializer(read_only=True)
     class Meta:
         model = UserProfile
         fields = ['id', 'user', 'first_name', 'last_name' ,'profile_picture','phone_number', 'joined_date']

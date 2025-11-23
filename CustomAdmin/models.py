@@ -7,7 +7,7 @@ class Course (models.Model):
     def __str__(self):
         return self.course_name
     
-class Subjct(models.Model):
+class Subject(models.Model):
     course=models.ForeignKey(Course,on_delete=models.CASCADE,related_name="subject")
     subject_name=models.CharField(max_length=100)
     

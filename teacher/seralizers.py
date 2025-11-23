@@ -41,14 +41,10 @@ class TeacherSeralizer(serializers.ModelSerializer):
         password=generate_otp()
         user = User.objects.create_user(
             email=email,
-            password=password ,# Use roll_no as password (convert to string)
-            role='teacher' # Set default role
+            password=password ,
+            role='teacher'
         )
-        # user = User.objects.create_user(
-        #     email=validated_data['email'],
-        #     password=validated_data['roll_no'],
-        #     role=validated_data.get('role' , 'student')
-        # )
+
         profile = UserProfile.objects.create(
             user=user,
             first_name=first_name,
@@ -56,7 +52,6 @@ class TeacherSeralizer(serializers.ModelSerializer):
             phone_number = phone_number,
             profile_picture = profile_picture,
         )
-        # Subscription.objects.create(user=user)
         teacher=Teacher.objects.create(user=profile , designation=designation , course=course)
         return teacher
     

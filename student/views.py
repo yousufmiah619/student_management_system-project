@@ -31,3 +31,28 @@ def student_list(request):
             }
             return Response(seralizer.data ,status=201)
     return Response(seralizer.errors ,status=400)
+
+
+@api_view(["GET","PUT","PATCH","DELETE"])
+@permission_classes([IsAuthenticated])
+def student_details(request, student_id):
+    try:
+        student = Student.objects.get(id=student_id)
+    except Exception as e :
+        return Response({"errors":"Student does not find"})
+        
+    if request.method=="GET":
+        serializer=StudentSeralizer(student)
+        return Response(serializer.data)
+    
+    if request.method in ["PUT","PATCH"]:
+        serializer=StudentSeralizer(student,data=request.data,partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data ,status=200)
+        return Response (serializer.errors , status=400)
+    
+    if request.method=="DELETE":
+        student.delete()
+        return Response ({"message":"Student delete successfully"},status=204)   
+         

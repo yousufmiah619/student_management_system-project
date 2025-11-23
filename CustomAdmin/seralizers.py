@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Course, Subjct
+from .models import Course, Subject
 
 class CourseSeralizer(serializers.ModelSerializer):
     class Meta:
@@ -13,5 +13,5 @@ class SubjectSeralizer(serializers.ModelSerializer):
         write_only=True
     )
     class Meta:
-        model=Subjct
+        model=Subject
         fields=["id","course","course_id","subject_name"]
