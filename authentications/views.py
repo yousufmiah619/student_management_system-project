@@ -34,6 +34,16 @@ def send_otp_email(email, otp):
     msg.attach_alternative(html_content, "text/html")
     msg.send(fail_silently=False)
     
+def send_mail(email, password):
+    html_content = render_to_string('otp_email_template.html', {'password': password, 'email': email})
+    msg = EmailMultiAlternatives(
+        subject='Your Creadential',
+        body=f'Your password is {password}',
+        from_email='Alomacitypulse <alamocitypulse@alamocitypulse.com>',
+        to=[email]
+    )
+    msg.attach_alternative(html_content, "text/html")
+    msg.send(fail_silently=False)
     
 # ✅ Register user
 @api_view(['POST'])

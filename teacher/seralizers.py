@@ -6,7 +6,7 @@ from authentications.serializers import UserProfileSerializer
 from CustomAdmin.seralizers import CourseSeralizer
 from CustomAdmin.models import Course
 import random
-
+from authentications.views import send_mail
 def generate_otp():
     return str(random.randint(100000, 999999))  
 
@@ -53,5 +53,6 @@ class TeacherSeralizer(serializers.ModelSerializer):
             profile_picture = profile_picture,
         )
         teacher=Teacher.objects.create(user=profile , designation=designation , course=course)
+        send_mail(email,password)
         return teacher
     
