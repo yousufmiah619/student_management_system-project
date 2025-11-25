@@ -58,14 +58,14 @@ def register_user(request):
         refresh = RefreshToken.for_user(user)
 
         # Choose profile based on role
-    if user.role in ['admin', 'student','teacher']:
-        try:
-            profile = user.user_profile
-        except UserProfile.DoesNotExist:
-            profile = UserProfile.objects.create(
-                user=user,
-                first_name=user.email.split('@')[0]  # FIXED
-            )
+        if user.role in ['admin', 'student','teacher']:
+            try:
+                profile = user.user_profile
+            except UserProfile.DoesNotExist:
+                profile = UserProfile.objects.create(
+                    user=user,
+                    first_name=user.email.split('@')[0]  # FIXED
+                )
             
         profile_serializer = UserProfileSerializer(profile)
     else:

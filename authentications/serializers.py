@@ -7,17 +7,17 @@ from authentications.models import UserProfile
 User = get_user_model()
 
 
-# class RegisterSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = User
-#         fields = ["email", "name", "password"]
-#         extra_kwargs = {
-#             "password": {"write_only": True}
-#         }
+class RegisterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["email", "name", "password"]
+        extra_kwargs = {
+            "password": {"write_only": True}
+        }
 
-#     def create(self, validated_data):
-#         validated_data["password"] = make_password(validated_data["password"])
-#         return super().create(validated_data)
+    def create(self, validated_data):
+        validated_data["password"] = make_password(validated_data["password"])
+        return super().create(validated_data)
 
 
 class CustomUserSerializer(serializers.ModelSerializer):
